@@ -27,7 +27,5 @@ jobs:
           python manage.py migrate
       - name: run server check
         run: |
-          python manage.py runserver &
-          sleep 5
-          curl http://127.0.0.1:8000/ || echo "Server did not start properly"
+          python manage.py check
           
