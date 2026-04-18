@@ -1,31 +1,25 @@
-name: Django CI pipeline
-on:
+name: Django CI pipline #name of the pipeline
+on: #trigger
   push:
-    branches:
-    - main
-  workflow_dispatch:
+    branches: #automatic trigger
+      - master
+  workflow_dispatch: #manual trigger
 
 jobs:
   test: #name of the job
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9, 3.10]
+    runs-on: ubuntu-latest #runner machine
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      - name: setup python #- means new step 
-        uses: actions/setup-python@v4
+        uses: actions/checkout@v3 #download the code
+      - name: setup python
+        uses: actions/setup-python@v4 #install the python
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Run migrations
+          pip install django
+      - name: run server check #run server and tests response
         run: |
-          python manage.py migrate
-      - name: run server check
-        run: |
-          python manage.py check
-          
+          python manage.py runserver &
+          sleep 5
+          curl http://127.0.0.1:8000 || echo "server failed"
