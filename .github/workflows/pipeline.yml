@@ -1,8 +1,8 @@
-name: Django CI pipline #name of the pipeline
+name: Django CI pipeline #name of the pipeline
 on: #trigger
   push:
     branches: #automatic trigger
-      - master
+      - main
   workflow_dispatch: #manual trigger
 
 jobs:
@@ -17,9 +17,11 @@ jobs:
           python-version: '3.10'
       - name: Install dependencies
         run: |
-          pip install django
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run migrations
+        run: |
+          python manage.py migrate
       - name: run server check #run server and tests response
         run: |
-          python manage.py runserver &
-          sleep 5
-          curl http://127.0.0.1:8000 || echo "server failed"
+          python manage.py check
